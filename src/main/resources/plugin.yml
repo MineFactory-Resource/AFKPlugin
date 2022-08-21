@@ -7,9 +7,13 @@ commands:
     permission: afk.afk
   잠수지역설정:
     permission: afk.setpoint
+  afkplugin:
+    permission: afk.reload
 
 permissions:
   afk.afk:
     default: true
   afk.setpoint:
+    default: op
+  afk.reload:
     default: op
