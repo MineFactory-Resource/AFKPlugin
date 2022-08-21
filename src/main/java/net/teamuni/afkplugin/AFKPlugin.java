@@ -14,12 +14,20 @@ import org.jetbrains.annotations.NotNull;
 
 public final class AFKPlugin extends JavaPlugin implements Listener {
 
+    World world;
+    double x;
+    double y;
+    double z;
+    float yaw;
+    float pitch;
+
     @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
         getCommand("잠수").setExecutor(this);
         getCommand("잠수지역설정").setExecutor(this);
+        getAfkPoint();
     }
 
     @Override
@@ -32,23 +40,18 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         Player player = (Player) sender;
 
         if (cmd.getName().equalsIgnoreCase("잠수") && player.hasPermission("afk.afk")) {
-            if (!player.getLocation().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
-                try {
-                    World world = Bukkit.getWorld(getConfig().getString("afkpoint.world"));
-                    double x = getConfig().getDouble("afkpoint.x");
-                    double y = getConfig().getDouble("afkpoint.y");
-                    double z = getConfig().getDouble("afkpoint.z");
-                    float yaw = (float) getConfig().getDouble("afkpoint.yaw");
-                    float pitch = (float) getConfig().getDouble("afkpoint.pitch");
+            try {
+                if (!player.getLocation().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
                     player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "이동 중...");
                     player.teleport(new Location(world, x, y, z, yaw, pitch));
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    getLogger().info("잠수 지역 정보를 불러올 수 없습니다.");
+                } else {
+                    player.sendMessage(ChatColor.RED + "이동할 수 없습니다.");
                 }
-            } else {
-                player.sendMessage(ChatColor.RED + "이동할 수 없습니다.");
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                getLogger().info("잠수 지역 정보를 불러올 수 없습니다.");
             }
+            return false;
         }
         if (cmd.getName().equalsIgnoreCase("잠수지역설정") && player.hasPermission("afk.setpoint")) {
             getConfig().set("afkpoint.world", player.getLocation().getWorld().getName());
@@ -59,7 +62,22 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
             getConfig().set("afkpoint.pitch", player.getLocation().getPitch());
             saveConfig();
             player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "AFK point has been set!");
+            return false;
         }
         return false;
+    }
+
+    public void getAfkPoint() {
+        try {
+            world = Bukkit.getWorld(getConfig().getString("afkpoint.world"));
+            x = getConfig().getDouble("afkpoint.x");
+            y = getConfig().getDouble("afkpoint.y");
+            z = getConfig().getDouble("afkpoint.z");
+            yaw = (float) getConfig().getDouble("afkpoint.yaw");
+            pitch = (float) getConfig().getDouble("afkpoint.pitch");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            getLogger().info("잠수 지역 정보를 불러올 수 없습니다.");
+        }
     }
 }
