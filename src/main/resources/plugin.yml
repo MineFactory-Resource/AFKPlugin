@@ -3,3 +3,14 @@ version: '${project.version}'
 main: net.teamuni.afkplugin.AFKPlugin
 api-version: 1.18
 softdepend: [PlaceholderAPI]
+commands:
+  잠수:
+    permission: afk.afk
+  잠수지역설정:
+    permission: afk.setpoint
+
+permissions:
+  afk.afk:
+    default: true
+  afk.setpoint:
+    default: op
