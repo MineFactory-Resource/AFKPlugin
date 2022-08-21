@@ -2,7 +2,6 @@ name: AFKPlugin
 version: '${project.version}'
 main: net.teamuni.afkplugin.AFKPlugin
 api-version: 1.18
-softdepend: [PlaceholderAPI]
 commands:
   잠수:
     permission: afk.afk
