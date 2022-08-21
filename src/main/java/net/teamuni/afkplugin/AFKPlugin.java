@@ -44,7 +44,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                     player.teleport(new Location(world, x, y, z, yaw, pitch));
                 } catch (NullPointerException e) {
                     e.printStackTrace();
-                    getLogger().info("/잠수지역설정 명령어를 통해 잠수 지역을 먼저 설정해 주세요.");
+                    getLogger().info("잠수 지역 정보를 불러올 수 없습니다.");
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "이동할 수 없습니다.");
