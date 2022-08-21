@@ -19,6 +19,8 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
+        getCommand("잠수").setExecutor(this);
+        getCommand("잠수지역설정").setExecutor(this);
     }
 
     @Override
