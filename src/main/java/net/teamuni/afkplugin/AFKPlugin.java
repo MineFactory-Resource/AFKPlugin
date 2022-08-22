@@ -11,6 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 
 public final class AFKPlugin extends JavaPlugin implements Listener {
 
@@ -33,7 +35,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        saveConfig();
     }
 
     @Override
@@ -62,6 +64,8 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
             getConfig().set("afkpoint.yaw", player.getLocation().getYaw());
             getConfig().set("afkpoint.pitch", player.getLocation().getPitch());
             saveConfig();
+            reloadConfig();
+            getAfkPoint();
             player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "AFK point has been set!");
             return false;
         }
