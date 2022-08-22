@@ -14,16 +14,22 @@ None
 ## Feature
 
 ### 잠수맵 이동 기능
-/잠수 명령어를 통해 플레이어를 설정한 맵으로 이동하는 기능입니다.  
-맵은 /잠수지역설정 명령어를 사용하여 지정할 수 있습니다.
+/잠수, /afk 명령어를 통해 플레이어를 설정한 맵으로 이동하는 기능입니다.  
+맵 지정은 /잠수지역설정 명령어를 사용하여 지정할 수 있습니다.
+
+### 플러그인 리로드 기능
+/afkplugin reload 명령어를 사용하여 플러그인을 리로드할 수 있습니다.
 
 ## Commands
 ```yaml
 commands:
   잠수:
     permission: afk.afk
+    aliases: [afk]
   잠수지역설정:
     permission: afk.setpoint
+  afkplugin:
+    permission: afk.reload
 ```
 ## Permissions
 ```yaml
@@ -31,5 +37,7 @@ permissions:
   afk.afk:
     default: true
   afk.setpoint:
+    default: op
+  afk.reload:
     default: op
 ```
