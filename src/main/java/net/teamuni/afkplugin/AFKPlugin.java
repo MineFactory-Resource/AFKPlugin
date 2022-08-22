@@ -66,14 +66,12 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
             getConfig().set("afkpoint.yaw", player.getLocation().getYaw());
             getConfig().set("afkpoint.pitch", player.getLocation().getPitch());
             saveConfig();
-            reloadConfig();
             getAfkPoint();
             player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "AFK point has been set!");
             return false;
         }
         if (cmd.getName().equalsIgnoreCase("afkplugin") && player.hasPermission("afk.reload")) {
             if (args[0].equalsIgnoreCase("reload")) {
-                reloadConfig();
                 saveConfig();
                 getAfkPoint();
                 player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "AFKplugin has been reloaded!");
