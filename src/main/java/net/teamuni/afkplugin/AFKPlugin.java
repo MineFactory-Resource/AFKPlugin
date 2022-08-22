@@ -11,6 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 
 public final class AFKPlugin extends JavaPlugin implements Listener {
 
@@ -26,6 +28,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
         getCommand("잠수").setExecutor(this);
+        getCommand("afk").setExecutor(this);
         getCommand("잠수지역설정").setExecutor(this);
         getCommand("afkplugin").setTabCompleter(new CommandTabCompleter());
         getAfkPoint();
@@ -39,8 +42,9 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         Player player = (Player) sender;
+        String[] afkCommands = {"잠수", "afk"};
 
-        if (cmd.getName().equalsIgnoreCase("잠수") && player.hasPermission("afk.afk")) {
+        if (Arrays.asList(afkCommands).contains(cmd.getName()) && player.hasPermission("afk.afk")) {
             try {
                 if (!player.getLocation().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
                     player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "이동 중...");

@@ -6,6 +6,7 @@ depend: [Multiverse-Core]
 commands:
   잠수:
     permission: afk.afk
+    aliases: [afk]
   잠수지역설정:
     permission: afk.setpoint
   afkplugin:
