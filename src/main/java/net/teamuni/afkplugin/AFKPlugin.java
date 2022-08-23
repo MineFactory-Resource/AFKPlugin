@@ -85,6 +85,15 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
             }
             return false;
         }
+        if (cmd.getName().equalsIgnoreCase("잠수포인트") && player.hasPermission("afk.afk")) {
+            if (args[0].equalsIgnoreCase("확인")) {
+                player.sendMessage("");
+                player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "현재 " + ChatColor.YELLOW + player.getName() + ChatColor.WHITE + "님의 잠수포인트는 " + ChatColor.GOLD +
+                        PlayerAFKPointManager.get().getLong("player.point." + player.getName()) + ChatColor.WHITE + "포인트입니다.");
+                player.sendMessage("");
+            }
+            return false;
+        }
         return false;
     }
 
