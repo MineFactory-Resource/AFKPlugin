@@ -37,6 +37,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         getCommand("afk").setExecutor(this);
         getCommand("잠수지역설정").setExecutor(this);
         getCommand("afkplugin").setTabCompleter(new CommandTabCompleter());
+        getCommand("잠수포인트").setTabCompleter(new CommandTabCompleter());
         getAfkPoint();
     }
 
