@@ -7,11 +7,16 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.*;
 
 
 public final class AFKPlugin extends JavaPlugin implements Listener {
@@ -27,6 +32,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
+        PlayerAFKPointManager.createCommandsYml();
         getCommand("잠수").setExecutor(this);
         getCommand("afk").setExecutor(this);
         getCommand("잠수지역설정").setExecutor(this);
@@ -37,6 +43,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         saveConfig();
+        PlayerAFKPointManager.save();
     }
 
     @Override
