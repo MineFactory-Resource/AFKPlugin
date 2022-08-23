@@ -111,4 +111,16 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
             getLogger().info("잠수 지역 정보를 불러올 수 없습니다.");
         }
     }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        Set<String> playerSet = PlayerAFKPointManager.get().getConfigurationSection("player.point").getKeys(false);
+
+        if (!playerSet.contains(player.getName())) {
+            playerSet.add(player.getName());
+            PlayerAFKPointManager.get().set("player.point", playerSet);
+            getLogger().info(player.getName() + "님의 잠수포인트 정보를 생성하였습니다.");
+        }
+    }
 }
