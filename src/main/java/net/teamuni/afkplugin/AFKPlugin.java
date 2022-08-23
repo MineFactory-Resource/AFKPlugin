@@ -123,4 +123,35 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
             getLogger().info(player.getName() + "님의 잠수포인트 정보를 생성하였습니다.");
         }
     }
+
+    @EventHandler
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        long delay = getConfig().getLong("delay");
+        long period = getConfig().getLong("period");
+
+        try {
+            BukkitRunnable runnable = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (player.getLocation().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
+                            long updatedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + player.getName()) + getConfig().getLong("value");
+                            PlayerAFKPointManager.get().set("player.point." + player.getName(), updatedPlayerAfkPoint);
+                            player.sendMessage("");
+                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.GOLD + getConfig().getLong("value") + ChatColor.WHITE + "만큼의 잠수포인트가 지급되었습니다.");
+                            player.sendMessage("");
+                            cancel();
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        getLogger().info("잠수포인트 정보를 불러오는데 문제가 발생하였습니다.");
+                    }
+                }
+            };
+            runnable.runTaskTimer(this, delay, period);
+        } catch (NullPointerException | IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+    }
 }
