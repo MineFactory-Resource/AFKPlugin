@@ -27,6 +27,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     double z;
     float yaw;
     float pitch;
+    BukkitRunnable runnable;
 
     @Override
     public void onEnable() {
@@ -130,7 +131,11 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         long delay = getConfig().getLong("delay");
         long period = getConfig().getLong("period");
 
-        BukkitRunnable runnable = new BukkitRunnable() {
+        if (runnable != null) {
+            runnable.cancel();
+        }
+
+        runnable = new BukkitRunnable() {
             @Override
             public void run() {
                 try {
@@ -140,7 +145,6 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                         player.sendMessage("");
                         player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.GOLD + getConfig().getLong("value") + ChatColor.WHITE + "만큼의 잠수포인트가 지급되었습니다.");
                         player.sendMessage("");
-                        cancel();
                     }
                 } catch (NullPointerException | IllegalArgumentException e) {
                     e.printStackTrace();
