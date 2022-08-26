@@ -201,29 +201,30 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
-        Player player = event.getPlayer();
-        long delay = getConfig().getLong("delay");
-        long period = getConfig().getLong("period");
-        BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    long updatedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + player.getName()) + getConfig().getLong("value");
-                    PlayerAFKPointManager.get().set("player.point." + player.getName(), updatedPlayerAfkPoint);
-                    player.sendMessage("");
-                    player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.GOLD + getConfig().getLong("value") + ChatColor.WHITE + "만큼의 잠수포인트가 지급되었습니다.");
-                    player.sendMessage("");
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    getLogger().info("잠수포인트 정보를 불러오는데 문제가 발생하였습니다.");
-                }
-            }
-        };
         try {
             if (event.getTo().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
+                Player player = event.getPlayer();
+                long delay = getConfig().getLong("delay");
+                long period = getConfig().getLong("period");
+                BukkitRunnable runnable = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            long updatedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + player.getName()) + getConfig().getLong("value");
+                            PlayerAFKPointManager.get().set("player.point." + player.getName(), updatedPlayerAfkPoint);
+                            player.sendMessage("");
+                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.GOLD + getConfig().getLong("value") + ChatColor.WHITE + "만큼의 잠수포인트가 지급되었습니다.");
+                            player.sendMessage("");
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                            getLogger().info("잠수포인트 정보를 불러오는데 문제가 발생하였습니다.");
+                        }
+                    }
+                };
                 afkPointCycle.put(player.getUniqueId(), runnable);
                 afkPointCycle.get(player.getUniqueId()).runTaskTimer(this, delay, period);
             } else if (event.getFrom().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
+                Player player = event.getPlayer();
                 afkPointCycle.get(player.getUniqueId()).cancel();
                 afkPointCycle.remove(player.getUniqueId());
             }
