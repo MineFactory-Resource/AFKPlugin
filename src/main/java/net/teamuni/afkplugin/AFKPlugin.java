@@ -98,10 +98,27 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
             DecimalFormat df = new DecimalFormat("###,###");
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("확인")) {
-                    player.sendMessage("");
-                    player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "현재 " + ChatColor.LIGHT_PURPLE + player.getName() + ChatColor.WHITE + "님의 잠수포인트는 " + ChatColor.GOLD +
-                            df.format(PlayerAFKPointManager.get().getLong("player.point." + player.getName())) + ChatColor.WHITE + "포인트입니다.");
-                    player.sendMessage("");
+                    if (args.length == 1) {
+                        player.sendMessage("");
+                        player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "현재 " + ChatColor.LIGHT_PURPLE + player.getName() + ChatColor.WHITE + "님의 잠수포인트는 " + ChatColor.GOLD +
+                                df.format(PlayerAFKPointManager.get().getLong("player.point." + player.getName())) + ChatColor.WHITE + "포인트입니다.");
+                        player.sendMessage("");
+                    } else if (args.length == 2 && player.isOp()) {
+                        if (PlayerAFKPointManager.get().getConfigurationSection("player.point").getKeys(false).contains(args[1])) {
+                            player.sendMessage("");
+                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "현재 " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님의 잠수포인트는 " + ChatColor.GOLD +
+                                    df.format(PlayerAFKPointManager.get().getLong("player.point." + args[1])) + ChatColor.WHITE + "포인트입니다.");
+                            player.sendMessage("");
+                        } else {
+                            player.sendMessage("");
+                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "해당 플레이어의 잠수포인트 정보가 존재하지 않습니다.");
+                            player.sendMessage("");
+                        }
+                    } else {
+                        player.sendMessage("");
+                        player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "올바르지 않은 명령어입니다.");
+                        player.sendMessage("");
+                    }
                     return false;
                 }
                 if (args[0].equalsIgnoreCase("차감") || args[0].equalsIgnoreCase("지급") || args[0].equalsIgnoreCase("설정")) {
@@ -111,27 +128,39 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                                 case "차감":
                                     long decreasedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + args[1]) - Long.parseLong(args[2]);
                                     PlayerAFKPointManager.get().set("player.point." + args[1], decreasedPlayerAfkPoint);
+                                    player.sendMessage("");
                                     player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님의 잠수포인트를 " + ChatColor.GOLD + df.format(Long.parseLong(args[2])) + ChatColor.WHITE + "만큼 차감하였습니다.");
+                                    player.sendMessage("");
                                     break;
                                 case "지급":
                                     long increasedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + args[1]) + Long.parseLong(args[2]);
                                     PlayerAFKPointManager.get().set("player.point." + args[1], increasedPlayerAfkPoint);
+                                    player.sendMessage("");
                                     player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님에게 잠수포인트를 " + ChatColor.GOLD + df.format(Long.parseLong(args[2])) + ChatColor.WHITE + "만큼 지급하였습니다.");
+                                    player.sendMessage("");
                                     break;
                                 case "설정":
                                     PlayerAFKPointManager.get().set("player.point." + args[1], Long.parseLong(args[2]));
+                                    player.sendMessage("");
                                     player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님의 잠수포인트를 " + ChatColor.GOLD + df.format(Long.parseLong(args[2])) + ChatColor.WHITE + "으로 설정하였습니다.");
+                                    player.sendMessage("");
                                     break;
                             }
                         } else {
+                            player.sendMessage("");
                             player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "숫자가 들어가야 하는 자리에 문자가 들어갈 수 없습니다.");
+                            player.sendMessage("");
                         }
                     } else {
+                        player.sendMessage("");
                         player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "명령어를 실행할 수 없습니다.");
+                        player.sendMessage("");
                     }
                     return false;
                 } else {
+                    player.sendMessage("");
                     player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "올바르지 않은 명령어입니다.");
+                    player.sendMessage("");
                 }
             } else {
                 player.sendMessage("");
