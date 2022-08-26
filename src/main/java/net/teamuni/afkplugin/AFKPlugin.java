@@ -30,6 +30,9 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     double z;
     float yaw;
     float pitch;
+    long delay;
+    long period;
+    long value;
 
     @Override
     public void onEnable() {
@@ -42,6 +45,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         getCommand("afkplugin").setTabCompleter(new CommandTabCompleter());
         getCommand("잠수포인트").setTabCompleter(new CommandTabCompleter());
         getAfkPoint();
+        getEssentialInfo();
     }
 
     @Override
@@ -90,6 +94,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 saveConfig();
                 getAfkPoint();
                 PlayerAFKPointManager.save();
+                getEssentialInfo();
                 player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "AFKplugin has been reloaded!");
             }
             return false;
@@ -186,6 +191,12 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         }
     }
 
+    public void getEssentialInfo() {
+        delay = getConfig().getLong("delay");
+        period = getConfig().getLong("period");
+        value = getConfig().getLong("value");
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -204,16 +215,14 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         try {
             if (event.getTo().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
                 Player player = event.getPlayer();
-                long delay = getConfig().getLong("delay");
-                long period = getConfig().getLong("period");
                 BukkitRunnable runnable = new BukkitRunnable() {
                     @Override
                     public void run() {
                         try {
-                            long updatedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + player.getName()) + getConfig().getLong("value");
+                            long updatedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + player.getName()) + value;
                             PlayerAFKPointManager.get().set("player.point." + player.getName(), updatedPlayerAfkPoint);
                             player.sendMessage("");
-                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.GOLD + getConfig().getLong("value") + ChatColor.WHITE + "만큼의 잠수포인트가 지급되었습니다.");
+                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.GOLD + value + ChatColor.WHITE + "만큼의 잠수포인트가 지급되었습니다.");
                             player.sendMessage("");
                         } catch (NullPointerException e) {
                             e.printStackTrace();
