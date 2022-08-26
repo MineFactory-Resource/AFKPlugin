@@ -67,7 +67,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 } else {
                     player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + "이동할 수 없습니다.");
                 }
-            } catch (NullPointerException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 getLogger().info("잠수 지역 정보를 불러올 수 없습니다.");
             }
@@ -227,7 +227,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 Player player = event.getPlayer();
                 afkPointCycle.remove(player.getUniqueId()).cancel();
             }
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             getLogger().info("잠수 지역 정보를 불러올 수 없습니다.");
         }
