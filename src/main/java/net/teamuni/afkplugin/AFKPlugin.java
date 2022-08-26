@@ -22,7 +22,7 @@ import java.util.*;
 
 public final class AFKPlugin extends JavaPlugin implements Listener {
 
-    public Hashtable<UUID, BukkitRunnable> afkPointCycle = new Hashtable<>();
+    public HashMap<UUID, BukkitRunnable> afkPointCycle = new HashMap<>();
 
     World world;
     double x;
