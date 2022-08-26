@@ -91,7 +91,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         }
         if (cmd.getName().equalsIgnoreCase("afkplugin") && player.hasPermission("afk.reload")) {
             if (args[0].equalsIgnoreCase("reload")) {
-                saveConfig();
+                reloadConfig();
                 getAfkPoint();
                 PlayerAFKPointManager.save();
                 getEssentialInfo();
