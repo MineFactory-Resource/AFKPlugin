@@ -172,7 +172,6 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         return false;
     }
 
-
     public void getAfkPoint() {
         try {
             world = Bukkit.getWorld(getConfig().getString("afkpoint.world"));
@@ -209,13 +208,11 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 try {
-                    if (player.getLocation().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
-                        long updatedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + player.getName()) + getConfig().getLong("value");
-                        PlayerAFKPointManager.get().set("player.point." + player.getName(), updatedPlayerAfkPoint);
-                        player.sendMessage("");
-                        player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.GOLD + getConfig().getLong("value") + ChatColor.WHITE + "만큼의 잠수포인트가 지급되었습니다.");
-                        player.sendMessage("");
-                    }
+                    long updatedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + player.getName()) + getConfig().getLong("value");
+                    PlayerAFKPointManager.get().set("player.point." + player.getName(), updatedPlayerAfkPoint);
+                    player.sendMessage("");
+                    player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.GOLD + getConfig().getLong("value") + ChatColor.WHITE + "만큼의 잠수포인트가 지급되었습니다.");
+                    player.sendMessage("");
                 } catch (NullPointerException | IllegalArgumentException e) {
                     e.printStackTrace();
                     getLogger().info("잠수포인트 정보를 불러오는데 문제가 발생하였습니다.");
