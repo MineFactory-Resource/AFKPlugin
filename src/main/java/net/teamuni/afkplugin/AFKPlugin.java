@@ -225,8 +225,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 runnable.runTaskTimer(this, delay, period);
             } else if (event.getFrom().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
                 Player player = event.getPlayer();
-                afkPointCycle.get(player.getUniqueId()).cancel();
-                afkPointCycle.remove(player.getUniqueId());
+                afkPointCycle.remove(player.getUniqueId()).cancel();
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
