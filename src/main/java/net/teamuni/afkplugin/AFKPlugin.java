@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -22,13 +22,14 @@ import java.util.*;
 
 public final class AFKPlugin extends JavaPlugin implements Listener {
 
+    public Hashtable<UUID, BukkitRunnable> afkPointCycle = new Hashtable<>();
+
     World world;
     double x;
     double y;
     double z;
     float yaw;
     float pitch;
-    BukkitRunnable runnable;
 
     @Override
     public void onEnable() {
@@ -47,6 +48,10 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     public void onDisable() {
         saveConfig();
         PlayerAFKPointManager.save();
+        for (Map.Entry<UUID, BukkitRunnable> playersInAfk : afkPointCycle.entrySet()) {
+            playersInAfk.getValue().cancel();
+        }
+        afkPointCycle.clear();
     }
 
     @Override
@@ -91,38 +96,47 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         }
         if (cmd.getName().equalsIgnoreCase("잠수포인트") && player.hasPermission("afk.afk")) {
             DecimalFormat df = new DecimalFormat("###,###");
-            if (args[0].equalsIgnoreCase("확인") && args.length == 1) {
-                player.sendMessage("");
-                player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "현재 " + ChatColor.LIGHT_PURPLE + player.getName() + ChatColor.WHITE + "님의 잠수포인트는 " + ChatColor.GOLD +
-                        df.format(PlayerAFKPointManager.get().getLong("player.point." + player.getName())) + ChatColor.WHITE + "포인트입니다.");
-                player.sendMessage("");
-                return false;
-            }
-            if (args[0].equalsIgnoreCase("차감") || args[0].equalsIgnoreCase("지급") || args[0].equalsIgnoreCase("설정")
-                    && args.length == 3 && player.isOp() && PlayerAFKPointManager.get().getConfigurationSection("player.point").getKeys(false).contains(args[1])) {
-                if (args[2].matches("[0-9]+")) {
-                    switch (args[0]) {
-                        case "차감":
-                            long decreasedPlayerAfkPoint = (PlayerAFKPointManager.get().getLong("player.point." + player.getName()) - Long.parseLong(args[2]));
-                            PlayerAFKPointManager.get().set("player.point." + args[1], decreasedPlayerAfkPoint);
-                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님의 잠수포인트를 " + ChatColor.GOLD + df.format(Long.parseLong(args[2])) + ChatColor.WHITE + "만큼 차감하였습니다.");
-                            break;
-                        case "지급":
-                            long increasedPlayerAfkPoint = (PlayerAFKPointManager.get().getLong("player.point." + player.getName()) + Long.parseLong(args[2]));
-                            PlayerAFKPointManager.get().set("player.point." + args[1], increasedPlayerAfkPoint);
-                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님에게 잠수포인트를 " + ChatColor.GOLD + df.format(Long.parseLong(args[2])) + ChatColor.WHITE + "만큼 지급하였습니다.");
-                            break;
-                        case "설정":
-                            PlayerAFKPointManager.get().set("player.point." + args[1], Long.parseLong(args[2]));
-                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님의 잠수포인트를 " + ChatColor.GOLD + df.format(Long.parseLong(args[2])) + ChatColor.WHITE + "으로 설정하였습니다.");
-                            break;
-                    }
-                } else {
-                    player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "숫자가 들어가야 하는 자리에 문자가 들어갈 수 없습니다.");
+            if (args.length > 0) {
+                if (args[0].equalsIgnoreCase("확인")) {
+                    player.sendMessage("");
+                    player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "현재 " + ChatColor.LIGHT_PURPLE + player.getName() + ChatColor.WHITE + "님의 잠수포인트는 " + ChatColor.GOLD +
+                            df.format(PlayerAFKPointManager.get().getLong("player.point." + player.getName())) + ChatColor.WHITE + "포인트입니다.");
+                    player.sendMessage("");
+                    return false;
                 }
-                return false;
+                if (args[0].equalsIgnoreCase("차감") || args[0].equalsIgnoreCase("지급") || args[0].equalsIgnoreCase("설정")) {
+                    if (args.length == 3 && player.isOp() && PlayerAFKPointManager.get().getConfigurationSection("player.point").getKeys(false).contains(args[1])) {
+                        if (args[2].matches("[0-9]+")) {
+                            switch (args[0]) {
+                                case "차감":
+                                    long decreasedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + args[1]) - Long.parseLong(args[2]);
+                                    PlayerAFKPointManager.get().set("player.point." + args[1], decreasedPlayerAfkPoint);
+                                    player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님의 잠수포인트를 " + ChatColor.GOLD + df.format(Long.parseLong(args[2])) + ChatColor.WHITE + "만큼 차감하였습니다.");
+                                    break;
+                                case "지급":
+                                    long increasedPlayerAfkPoint = PlayerAFKPointManager.get().getLong("player.point." + args[1]) + Long.parseLong(args[2]);
+                                    PlayerAFKPointManager.get().set("player.point." + args[1], increasedPlayerAfkPoint);
+                                    player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님에게 잠수포인트를 " + ChatColor.GOLD + df.format(Long.parseLong(args[2])) + ChatColor.WHITE + "만큼 지급하였습니다.");
+                                    break;
+                                case "설정":
+                                    PlayerAFKPointManager.get().set("player.point." + args[1], Long.parseLong(args[2]));
+                                    player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.WHITE + "님의 잠수포인트를 " + ChatColor.GOLD + df.format(Long.parseLong(args[2])) + ChatColor.WHITE + "으로 설정하였습니다.");
+                                    break;
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "숫자가 들어가야 하는 자리에 문자가 들어갈 수 없습니다.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "명령어를 실행할 수 없습니다.");
+                    }
+                    return false;
+                } else {
+                    player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "올바르지 않은 명령어입니다.");
+                }
             } else {
-                player.sendMessage(ChatColor.AQUA + "[잠수] " + ChatColor.WHITE + "올바르지 않은 명령어입니다.");
+                player.sendMessage("");
+                player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.GREEN + "[ " + ChatColor.WHITE + "/잠수포인트 확인" + ChatColor.GREEN + " ]" + ChatColor.WHITE + " 명령어를 사용해 주세요.");
+                player.sendMessage("");
             }
             return false;
         }
@@ -158,16 +172,11 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+    public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         long delay = getConfig().getLong("delay");
         long period = getConfig().getLong("period");
-
-        if (runnable != null) {
-            runnable.cancel();
-        }
-
-        runnable = new BukkitRunnable() {
+        BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
                 try {
@@ -184,6 +193,13 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 }
             }
         };
-        runnable.runTaskTimer(this, delay, period);
+
+        if (event.getTo().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
+            afkPointCycle.put(player.getUniqueId(), runnable);
+            afkPointCycle.get(player.getUniqueId()).runTaskTimer(this, delay, period);
+        } else if (event.getFrom().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
+            afkPointCycle.get(player.getUniqueId()).cancel();
+            afkPointCycle.remove(player.getUniqueId());
+        }
     }
 }
