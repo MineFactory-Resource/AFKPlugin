@@ -227,7 +227,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 Player player = event.getPlayer();
                 afkPointCycle.remove(player.getUniqueId()).cancel();
             }
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException | IllegalArgumentException e) {
             e.printStackTrace();
             getLogger().info("잠수 지역 정보를 불러올 수 없습니다.");
         }
