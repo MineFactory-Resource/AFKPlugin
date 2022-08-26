@@ -219,13 +219,17 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 }
             }
         };
-
-        if (event.getTo().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
-            afkPointCycle.put(player.getUniqueId(), runnable);
-            afkPointCycle.get(player.getUniqueId()).runTaskTimer(this, delay, period);
-        } else if (event.getFrom().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
-            afkPointCycle.get(player.getUniqueId()).cancel();
-            afkPointCycle.remove(player.getUniqueId());
+        try {
+            if (event.getTo().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
+                afkPointCycle.put(player.getUniqueId(), runnable);
+                afkPointCycle.get(player.getUniqueId()).runTaskTimer(this, delay, period);
+            } else if (event.getFrom().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
+                afkPointCycle.get(player.getUniqueId()).cancel();
+                afkPointCycle.remove(player.getUniqueId());
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            getLogger().info("잠수 지역 정보를 불러올 수 없습니다.");
         }
     }
 }
