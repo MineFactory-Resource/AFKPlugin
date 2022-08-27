@@ -11,6 +11,8 @@ commands:
     permission: afk.setpoint
   afkplugin:
     permission: afk.reload
+  잠수포인트:
+    permission: afk.afk
 permissions:
   afk.afk:
     default: true
