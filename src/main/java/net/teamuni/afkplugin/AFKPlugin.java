@@ -95,6 +95,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 reloadConfig();
                 getAfkPoint();
                 PlayerAFKPointManager.save();
+                MessagesManager.reload();
                 getEssentialInfo();
                 player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "AFKplugin has been reloaded!");
             }
