@@ -11,7 +11,7 @@ public class PlayerAFKPointManager {
     private static File file;
     private static FileConfiguration commandsFile;
 
-    public static void createCommandsYml() {
+    public static void createAfkPointDataYml() {
         file = new File(main.getDataFolder(), "afkpointdata.yml");
 
         if (!file.exists()) {
