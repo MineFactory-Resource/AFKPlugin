@@ -39,6 +39,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
         PlayerAFKPointManager.createAfkPointDataYml();
+        MessagesManager.createMessagesYml();
         getCommand("잠수").setExecutor(this);
         getCommand("afk").setExecutor(this);
         getCommand("잠수지역설정").setExecutor(this);
