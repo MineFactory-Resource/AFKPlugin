@@ -204,7 +204,6 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
 
         if (!playerSet.contains(player.getName())) {
             playerSet.add(player.getName());
-            PlayerAFKPointManager.get().set("player.point", playerSet);
             PlayerAFKPointManager.get().set("player.point." + player.getName(), 0);
             getLogger().info(player.getName() + "님의 잠수포인트 정보를 생성하였습니다.");
         }
