@@ -1,5 +1,7 @@
 package net.teamuni.afkplugin;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,6 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.*;
 
 
@@ -33,6 +36,10 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     long delay;
     long period;
     long value;
+    long fadeIn;
+    long stay;
+    long fadeOut;
+    Title title;
 
     @Override
     public void onEnable() {
@@ -68,6 +75,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 if (!player.getLocation().getWorld().getName().equalsIgnoreCase(getConfig().getString("afkpoint.world"))) {
                     player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "이동 중...");
                     player.teleport(new Location(world, x, y, z, yaw, pitch));
+                    player.showTitle(title);
                 } else {
                     player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + "이동할 수 없습니다.");
                 }
@@ -195,6 +203,16 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
         delay = getConfig().getLong("delay");
         period = getConfig().getLong("period");
         value = getConfig().getLong("value");
+        fadeIn = getConfig().getLong("fadeIn");
+        stay = getConfig().getLong("stay");
+        fadeOut = getConfig().getLong("fadeOut");
+        try {
+            title = Title.title(Component.text(ChatColor.translateAlternateColorCodes('&', getConfig().getString("title"))),
+                    Component.text(ChatColor.translateAlternateColorCodes('&', getConfig().getString("subtitle"))),
+                    Title.Times.times(Duration.ofMillis(fadeIn), Duration.ofMillis(stay), Duration.ofMillis(fadeOut)));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
