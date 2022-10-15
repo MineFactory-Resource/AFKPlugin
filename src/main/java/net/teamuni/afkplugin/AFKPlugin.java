@@ -45,7 +45,8 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
-        PlayerAFKPointManager.createCommandsYml();
+        PlayerAFKPointManager.createAfkPointDataYml();
+        MessagesManager.createMessagesYml();
         getCommand("잠수").setExecutor(this);
         getCommand("afk").setExecutor(this);
         getCommand("잠수지역설정").setExecutor(this);
@@ -102,6 +103,7 @@ public final class AFKPlugin extends JavaPlugin implements Listener {
                 reloadConfig();
                 getAfkPoint();
                 PlayerAFKPointManager.save();
+                MessagesManager.reload();
                 getEssentialInfo();
                 player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "AFKplugin has been reloaded!");
             }

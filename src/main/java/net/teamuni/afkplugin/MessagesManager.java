@@ -6,33 +6,33 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public class PlayerAFKPointManager {
+public class MessagesManager {
     private static final AFKPlugin main = AFKPlugin.getPlugin(AFKPlugin.class);
     private static File file;
-    private static FileConfiguration commandsFile;
+    private static FileConfiguration messagesFile;
 
-    public static void createAfkPointDataYml() {
-        file = new File(main.getDataFolder(), "afkpointdata.yml");
+    public static void createMessagesYml() {
+        file = new File(main.getDataFolder(), "messages.yml");
 
         if (!file.exists()) {
-            main.saveResource("afkpointdata.yml", false);
+            main.saveResource("messages.yml", false);
         }
-        commandsFile = YamlConfiguration.loadConfiguration(file);
+        messagesFile = YamlConfiguration.loadConfiguration(file);
     }
 
     public static FileConfiguration get() {
-        return commandsFile;
+        return messagesFile;
     }
 
     public static void save() {
         try {
-            commandsFile.save(file);
+            messagesFile.save(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static void reload() {
-        commandsFile = YamlConfiguration.loadConfiguration(file);
+        messagesFile = YamlConfiguration.loadConfiguration(file);
     }
 }
